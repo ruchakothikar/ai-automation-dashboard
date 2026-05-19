@@ -1,5 +1,0 @@
-timestamp,event_type,task_name,status,details
-2026-05-18T17:47:26.820120,AI_SERVICE,OpenAI Quote Generation,FALLBACK,"Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
-2026-05-18T17:47:26.835744,AUTOMATION,Motivational Quote Generator,SUCCESS,Reliable systems are built through iteration.
-2026-05-18T17:49:56.672139,AI_SERVICE,OpenAI Quote Generation,FALLBACK,"Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
-2026-05-18T17:49:56.672139,AUTOMATION,Motivational Quote Generator,SUCCESS,Consistency builds long-term success.

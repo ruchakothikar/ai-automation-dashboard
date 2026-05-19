@@ -27,3 +27,16 @@ if st.button("Generate AI Quote"):
         quote = get_motivational_quote()
 
         st.info(quote)
+
+from analytics.log_analyzer import get_summary_metrics
+
+st.subheader("System Analytics Overview")
+
+metrics = get_summary_metrics()
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("Total Events", metrics["total_events"])
+col2.metric("Success", metrics["success_count"])
+col3.metric("Fallbacks", metrics["fallback_count"])
+col4.metric("Errors", metrics["error_count"])
