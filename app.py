@@ -2,6 +2,8 @@ import streamlit as st
 
 from utils.logger import log_event
 from automations.motivational_quotes import get_motivational_quote
+from analytics.log_analyzer import get_summary_metrics
+from email_system.email_summarizer import summarize_email
 
 st.set_page_config(page_title="AI Automation Dashboard")
 
@@ -28,7 +30,24 @@ if st.button("Generate AI Quote"):
 
         st.info(quote)
 
-from analytics.log_analyzer import get_summary_metrics
+st.header("Email Analysis System")
+
+email_input = st.text_area(
+    "Paste Email Content",
+    height=200,
+    placeholder="Paste email text here..."
+)
+
+if st.button("Generate Email Summary"):
+    if email_input.strip():
+        with st.spinner("Summarizing email..."):
+            summary = summarize_email(email_input)
+
+        st.success("Summary Generated")
+        st.write(summary)
+
+    else:
+        st.warning("Please paste email content first.")
 
 st.subheader("System Analytics Overview")
 
