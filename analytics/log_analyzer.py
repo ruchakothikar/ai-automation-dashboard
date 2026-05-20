@@ -4,10 +4,19 @@ LOG_FILE = "logs/automation_logs.csv"
 
 def load_logs():
     try:
-        df = pd.read_csv(LOG_FILE)
+        df = pd.read_csv(LOG_FILE, encoding="latin1")
         return df
-    except Exception:
-        return pd.DataFrame(columns=["timestamp", "event_type", "task_name", "status", "details"])
+    except Exception as e:
+
+        return pd.DataFrame(
+            columns=[
+                "timestamp",
+                "event_type",
+                "task_name",
+                "status",
+                "details"
+            ]
+        )
     
 def get_summary_metrics():
     df = load_logs()
