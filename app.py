@@ -10,8 +10,11 @@ from reminders.reminder_system import (
     check_reminders,
     delete_event,
     edit_event,
-    get_all_events
+    get_all_events,
+    process_reminders
 )
+
+process_reminders()
 
 st.set_page_config(page_title="AI Automation Dashboard")
 
@@ -134,10 +137,25 @@ if st.session_state.show_add:
     event_title = st.text_input("Event Title")
     event_date = st.text_input("Event Date (YYYY-MM-DD)")
 
+    set_reminder = st.checkbox("Set Reminder")
+
+    event_email = None
+
+    if set_reminder:
+        event_email = st.text_input("Reminder Email")
+
     if st.button("Add Event"):
         if event_title.strip() and event_date.strip():
-            result = add_event(event_title, event_date)
+
+            result = add_event(
+                event_title,
+                event_date,
+                event_email if set_reminder else None,
+                set_reminder
+            )
+
             st.success(result)
+
         else:
             st.warning("Please enter both title and date.")
 

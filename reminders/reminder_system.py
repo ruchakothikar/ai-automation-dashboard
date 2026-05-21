@@ -1,11 +1,12 @@
 import json
 from datetime import datetime, timedelta
+from email_system.email_sender import send_email
 
 from utils.logger import log_event
 
 REMINDER_FILE = "reminders/events.json"
 
-def add_event(title, date_str):
+def add_event(title, date_str, email=None, reminder_enabled=False):
     """
     Store an event (format: YYYY-MM-DD)
     """
@@ -18,7 +19,10 @@ def add_event(title, date_str):
 
         events.append({
             "title": title,
-            "date": date_str
+            "date": date_str,
+            "email": email,
+            "reminder_enabled": reminder_enabled,
+            "reminder_sent": False
         })
 
         with open(REMINDER_FILE, "w") as f:
@@ -126,8 +130,17 @@ def edit_event(old_title, old_date, new_title, new_date):
         
         for event in events:
             if event["title"] == old_title and event["date"] == old_date:
+
                 event["title"] = new_title
                 event["date"] = new_date
+
+                event["reminder_sent"] = False
+
+                if "email" not in event:
+                    event["email"] = None
+
+                if "reminder_enabled" not in event:
+                    event["reminder_enabled"] = False
 
         with open(REMINDER_FILE, "w") as f:
             json.dump(events, f, indent=4)
@@ -160,3 +173,40 @@ def get_all_events():
             return []
     except:
         return []
+    
+def process_reminders():
+    try:
+        with open(REMINDER_FILE, "r") as f:
+            events = json.load(f)
+
+    except:
+        return
+    
+    today = datetime.now().date()
+    updated = False
+
+    for event in events:
+
+        if not event.get("reminder_enabled", False):
+            continue
+
+        if event.get("reminder_sent", False):
+            continue
+
+        event_date = datetime.strptime(event["date"], "%Y-%m-%d").date()
+        days_left = (event_date - today).days
+
+        if 0 <= days_left <= 5:
+
+            send_email(
+                subject=f"Reminder: {event['title']}",
+                body=f"Event '{event['title']}' is in {days_left} day(s) on {event['date']}.",
+                to_email=event["email"]
+            )
+
+            event["reminder_sent"] = True
+            updated = True
+
+    if updated:
+        with open(REMINDER_FILE, "w") as f:
+            json.dump(events, f, indent=4)
