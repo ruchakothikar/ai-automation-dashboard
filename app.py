@@ -14,6 +14,37 @@ from reminders.reminder_system import (
     process_reminders
 )
 
+st.markdown("## Dashboard Navigation")
+
+col1, col2, col3, col4, col5 = st.columns(5)
+
+with col1:
+    if st.button("Quotes"):
+        st.markdown('<a href="#motivational-quotes"></a>', unsafe_allow_html=True)
+
+with col2:
+    if st.button("Email"):
+        st.markdown('<a href="#email-analysis"></a>', unsafe_allow_html=True)
+
+with col3:
+    if st.button("Profiles"):
+        st.markdown('<a href="#profile-generation"></a>', unsafe_allow_html=True)
+
+with col4:
+    if st.button("Events"):
+        st.markdown('<a href="#event-system"></a>', unsafe_allow_html=True)
+
+with col5:
+    if st.button("Analytics"):
+        st.markdown('<a href="#system-analytics-overview"></a>', unsafe_allow_html=True)
+
+st.markdown("""
+<script>
+const anchors = document.querySelectorAll("a");
+anchors.forEach(a => a.click());
+</script>
+""", unsafe_allow_html=True)
+
 process_reminders()
 
 st.set_page_config(page_title="AI Automation Dashboard")
@@ -34,6 +65,7 @@ This system demonstrates AI-powered automation workflows including:
 st.success("System initialized successfully.")
 
 st.header("AI Motivational Quote Generator")
+st.markdown('<a id="motivational-quotes"></a>', unsafe_allow_html=True)
 
 if st.button("Generate AI Quote"):
     with st.spinner("Generating quote..."):
@@ -42,6 +74,7 @@ if st.button("Generate AI Quote"):
         st.info(quote)
 
 st.header("Email Analysis System")
+st.markdown('<a id="email-analysis"></a>', unsafe_allow_html=True)
 
 email_input = st.text_area(
     "Paste Email Content",
@@ -61,6 +94,7 @@ if st.button("Generate Email Summary"):
         st.warning("Please paste email content first.")
 
 st.header("Profile Generation System")
+st.markdown('<a id="profile-generation"></a>', unsafe_allow_html=True)
 
 name_input = st.text_input("Enter Name")
 
@@ -81,7 +115,8 @@ if st.button("Generate Profile"):
     else:
         st.warning("Please enter both name and background information.")
 
-st.header("Email Reminder System")
+st.header("Event System")
+st.markdown('<a id="event-system"></a>', unsafe_allow_html=True)
 
 for key in [
     "show_view",
@@ -105,7 +140,11 @@ if st.session_state.show_view:
 
     if events:
         for e in events:
-            st.write(f"{e['title']} - {e['date']}")
+            st.markdown(f"""
+            ### {e['title']}
+            - Date: {e['date']}
+            - Reminder Enabled: {"Yes" if e.get("reminder_enabled") else "No"}
+            """)
     else:
         st.info("No events found.")
 
@@ -163,6 +202,8 @@ if st.session_state.show_add:
 
 if st.session_state.show_edit:
 
+    st.subheader("Edit Existing Event")
+
     events = get_all_events()
 
     if events:
@@ -180,47 +221,56 @@ if st.session_state.show_edit:
         selected_index = event_options.index(selected_event)
         selected_data = events[selected_index]
 
+        st.write("### Event Details")
+
+        updated_title = st.text_input(
+            "Event Title",
+            value=selected_data["title"]
+        )
+
+        updated_date = st.text_input(
+            "Event Date (YYYY-MM-DD)",
+            value=selected_data["date"]
+        )
+
+        reminder_enabled = st.checkbox(
+            "Set Reminder",
+            value=selected_data.get("reminder_enabled", False)
+        )
+
+        updated_email = None
+
+        if reminder_enabled:
+            updated_email = st.text_input(
+                "Reminder Email",
+                value=selected_data.get("email", "")
+            )
+
         col1, col2 = st.columns(2)
 
-        # Delete
 
         with col1:
-            if st.button("Delete Event"):
-                result = delete_event(
-                    selected_data["title"],
-                    selected_data["date"]
-                )
-                st.success(result)
 
-        # Edit
-
-        with col2:
-
-            if st.button("Edit Selected Event"):
-                st.session_state.show_edit_fields = True
-
-        if "show_edit_fields" not in st.session_state:
-            st.session_state.show_edit_fields = False
-
-        if st.session_state.show_edit_fields:
-
-            new_title = st.text_input(
-                "New Title",
-                value=selected_data["title"]
-            )
-
-            new_date = st.text_input(
-                "New Date",
-                value=selected_data["date"]
-            )
-
-            if st.button("Update Event"):
+            if st.button("Save Changes"):
 
                 result = edit_event(
                     selected_data["title"],
                     selected_data["date"],
-                    new_title,
-                    new_date
+                    updated_title,
+                    updated_date,
+                    reminder_enabled,
+                    updated_email if reminder_enabled else None
+                )
+
+                st.success(result)
+
+        with col2:
+
+            if st.button("Delete Event"):
+
+                result = delete_event(
+                    selected_data["title"],
+                    selected_data["date"],
                 )
 
                 st.success(result)
@@ -229,12 +279,13 @@ if st.session_state.show_edit:
         st.info("No events available.")
 
 st.subheader("System Analytics Overview")
+st.markdown('<a id="system-analytics-overview"></a>', unsafe_allow_html=True)
 
 metrics = get_summary_metrics()
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Total Events", metrics["total_events"])
+col1.metric("Total Actions Logged", metrics["total_events"])
 col2.metric("Success", metrics["success_count"])
 col3.metric("Fallbacks", metrics["fallback_count"])
 col4.metric("Errors", metrics["error_count"])

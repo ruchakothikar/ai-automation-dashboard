@@ -120,7 +120,14 @@ def delete_event(title, date_str):
 
         return "Failed to delete event."
     
-def edit_event(old_title, old_date, new_title, new_date):
+def edit_event(
+    old_title,
+    old_date,
+    new_title,
+    new_date,
+    reminder_enabled=False,
+    email=None
+):
     try:
         try:
             with open(REMINDER_FILE, "r") as f:
@@ -134,13 +141,14 @@ def edit_event(old_title, old_date, new_title, new_date):
                 event["title"] = new_title
                 event["date"] = new_date
 
-                event["reminder_sent"] = False
+                event["reminder_enabled"] = reminder_enabled
 
-                if "email" not in event:
+                if reminder_enabled:
+                    event["email"] = email
+                else:
                     event["email"] = None
 
-                if "reminder_enabled" not in event:
-                    event["reminder_enabled"] = False
+                event["reminder_sent"] = False
 
         with open(REMINDER_FILE, "w") as f:
             json.dump(events, f, indent=4)
