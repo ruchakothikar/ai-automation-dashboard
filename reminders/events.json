@@ -1,1 +1,16 @@
-[]
+[
+    {
+        "title": "Demo 1",
+        "date": "2026-05-21",
+        "email": null,
+        "reminder_enabled": false,
+        "reminder_sent": false
+    },
+    {
+        "title": "Demo 2",
+        "date": "2026-05-22",
+        "email": null,
+        "reminder_enabled": false,
+        "reminder_sent": false
+    }
+]

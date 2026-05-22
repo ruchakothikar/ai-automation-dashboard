@@ -54,10 +54,10 @@ st.title("AI Operations Automation Dashboard")
 st.markdown("""
 This system demonstrates AI-powered automation workflows including:
             
+            -Profile generation system
             -Email summarization pipeline
             -Reminder automation system
             -Motivational quote generator
-            -Workflow logging and monitoring
             -Dashboard analytics and trend tracking
 """
            )
